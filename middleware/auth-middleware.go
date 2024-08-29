@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 )
@@ -30,8 +32,12 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func validateTokenWithUserService(token string) (bool, error) {
-	userServiceURL := "http://localhost:8080/validate"
-	req, err := http.NewRequest("GET", userServiceURL, nil)
+	userServiceURL := os.Getenv("APP_USER_SERVICE_URL")
+
+	fmt.Println("USER SERVICE URL", userServiceURL)
+
+	url := fmt.Sprintf("%s/validate", userServiceURL)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false, err
 	}

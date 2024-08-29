@@ -1,0 +1,57 @@
+services:
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - DB_CONNECTION_STRING=postgres://postgres:postgres@postgres:5432/user_db?sslmode=disable
+      - APP_ENV=production
+    
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      - DB_CONNECTION_STRING=postgres://postgres:postgres@postgres:5432/product_db?sslmode=disable
+      - APP_ENV=production
+      - APP_USER_SERVICE_URL=http://user-service:8080
+  
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082" 
+    depends_on:
+      - postgres
+    environment:
+      - DB_CONNECTION_STRING=postgres://postgres:postgres@postgres:5432/order_db?sslmode=disable
+      - APP_ENV=production
+      - APP_USER_SERVICE_URL=http://user-service:8080
+      - APP_PRODUCT_SERVICE_URL=http://product-service:8081
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=user_db
+
+    volumes:
+      - tmp-new:/var/lib/postgresql/data
+      - './order-service/config/create-order-database.sql:/docker-entrypoint-initdb.d/create-order-database.sql'
+      - './product-service/config/create-product-database.sql:/docker-entrypoint-initdb.d/create-product-database.sql'
+
+    ports:
+      - "5432:5432"
+
+volumes:
+  tmp-new:
