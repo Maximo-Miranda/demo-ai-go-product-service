@@ -24,6 +24,10 @@ func main() {
 
 	e.Use(echo_middlewares.Logger())
 
+	e.GET("/", func(c echo.Context) error {
+		return c.String(200, "User service is running!")
+	})
+
 	// Grupo de rutas protegidas
 	protected := e.Group("")
 	protected.Use(middleware.AuthMiddleware)
