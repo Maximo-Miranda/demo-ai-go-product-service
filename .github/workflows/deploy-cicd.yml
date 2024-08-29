@@ -1,0 +1,44 @@
+name: Development CI-CD
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - uses: a7ul/tar-action@v1.1.0
+        with:
+          command: c
+          cwd: "./"
+          files: |
+            config/
+            db/
+            handlers/
+            middleware/
+            models/
+            .gitignore
+            Dockerfile
+            go.mod
+            go.sum
+            main.go
+          outPath: deploy.tar
+
+      - name: Deploy Product Service to Skymax Network
+        uses: caprover/deploy-from-github@v1.0.1
+        with:
+          server: "${{ secrets.CAPROVER_DEVELOPMENT_SERVER }}"
+          app: "${{ secrets.PRODUCT_SERVICE_NAME }}"
+          token: "${{ secrets.PRODUCT_SERVICE_DEVELOPMENT_TOKEN }}"
