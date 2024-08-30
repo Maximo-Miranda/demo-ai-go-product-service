@@ -34,7 +34,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 func validateTokenWithUserService(token string) (bool, error) {
 
-	url, err := MakeUserServiceUrl()
+	url, err := MakeUserServiceUrl(os.Getenv("APP_USER_SERVICE_URL"))
 	if err != nil {
 		return false, err
 	}
@@ -61,14 +61,14 @@ func validateTokenWithUserService(token string) (bool, error) {
 }
 
 // makeUserServiceUrl crea una URL válida para contactar con el servicio de usuarios
-func MakeUserServiceUrl() (string, error) {
-	url := os.Getenv("APP_USER_SERVICE_URL")
+func MakeUserServiceUrl(userServiceHost string) (string, error) {
+	var url string
 
-	if len(url) == 0 {
+	if len(userServiceHost) == 0 {
 		return url, errors.New("no se ha configurado el host del servicio de usuarios")
 	}
 
-	url = fmt.Sprintf("%s/validate", url)
+	url = fmt.Sprintf("%s/validate", userServiceHost)
 
 	return url, nil
 }
