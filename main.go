@@ -40,4 +40,5 @@ func main() {
 	protected.GET("/products", handlers.ListProducts)
 
 	e.Logger.Fatal(e.Start(":8081"))
+
 }
