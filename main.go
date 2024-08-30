@@ -30,6 +30,7 @@ func main() {
 
 	// Grupo de rutas protegidas
 	protected := e.Group("")
+
 	protected.Use(middleware.AuthMiddleware)
 
 	// Rutas protegidas
