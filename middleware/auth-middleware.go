@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -19,7 +20,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		// Aquí llamaremos al servicio de usuarios para validar el token
 		isValid, err := validateTokenWithUserService(token)
 		if err != nil {
-			panic(err)
+			//panic(err)
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Error al validar el token"})
 		}
 
@@ -32,11 +33,12 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func validateTokenWithUserService(token string) (bool, error) {
-	userServiceURL := os.Getenv("APP_USER_SERVICE_URL")
 
-	fmt.Println("USER SERVICE URL", userServiceURL)
+	url, err := MakeUserServiceUrl(os.Getenv("APP_USER_SERVICE_URL"))
+	if err != nil {
+		return false, err
+	}
 
-	url := fmt.Sprintf("%s/validate", userServiceURL)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return false, err
@@ -56,4 +58,17 @@ func validateTokenWithUserService(token string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// makeUserServiceUrl crea una URL válida para contactar con el servicio de usuarios
+func MakeUserServiceUrl(userServiceHost string) (string, error) {
+	var url string
+
+	if len(userServiceHost) == 0 {
+		return url, errors.New("no se ha configurado el host del servicio de usuarios")
+	}
+
+	url = fmt.Sprintf("%s/validate", userServiceHost)
+
+	return url, nil
 }

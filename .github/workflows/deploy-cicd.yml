@@ -14,11 +14,21 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.5'
+      - name: Install dependencies
+        run: go get .
+      - name: Build
+        run: go build -v ./...
+      - name: Test with the Go CLI
+        run: go test -v ./...
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-
       - uses: a7ul/tar-action@v1.1.0
         with:
           command: c
