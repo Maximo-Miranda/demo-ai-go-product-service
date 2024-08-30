@@ -25,7 +25,7 @@ func main() {
 	e.Use(echo_middlewares.Logger())
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(200, "User service is running!")
+		return c.String(200, "User service is running! v1.0.0")
 	})
 
 	// Grupo de rutas protegidas
