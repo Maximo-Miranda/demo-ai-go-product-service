@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product-service
+  ports:
+  - port: 80
+    targetPort: 8081
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+      - name: product-service
+        image: mmrianda/product-service:v2
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+        ports:
+        - containerPort: 8081
+        env:
+        - name: DB_CONNECTION_STRING
+          value: postgres://postgres:8snnc9S6xo3fHKMU9Zx@67.205.184.248:5432/product_db?sslmode=disable
+        - name: APP_ENV
+          value: "production"
+        
