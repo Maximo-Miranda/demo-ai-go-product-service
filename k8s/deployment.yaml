@@ -41,4 +41,6 @@ spec:
           value: postgres://postgres:8snnc9S6xo3fHKMU9Zx@67.205.184.248:5432/product_db?sslmode=disable
         - name: APP_ENV
           value: "production"
+        - name: APP_USER_SERVICE_URL
+          value: "http://abfbb29ebed664b798a61a83c3eefcca-1482896081.us-east-2.elb.amazonaws.com"
         
