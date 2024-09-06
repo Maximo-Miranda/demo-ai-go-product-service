@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: product-service
-        image: mmrianda/product-service:v3
+        image: mmrianda/product-service:v4
         resources:
           limits:
             cpu: "500m"
